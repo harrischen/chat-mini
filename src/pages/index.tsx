@@ -4,11 +4,52 @@ import styles from "@/styles/Home.module.css";
 function SendMsg() {
   const handlerClick = async () => {
     try {
+      const useApply = (input: Uint8Array) => {
+        const decoder = new TextDecoder("utf-8");
+        const raw = decoder.decode(input);
+
+        let ev = "";
+        let data = "";
+        raw.split("\n").forEach((line) => {
+          const [key, value] = line.split(":");
+
+          if (key === "event") {
+            ev = value;
+            console.log("event", value);
+          } else if (key === "data") {
+            data = value;
+            console.log("data", value);
+          }
+        });
+
+        if (ev.trim() === "countdown" && data) {
+          document.getElementById("data")!.innerHTML = data;
+        }
+      };
+
       const res = await fetch(`/api/chat`, {
         method: "POST",
+        headers: {
+          Accept: "text/event-stream",
+        },
       });
-      const data = await res.json();
-      console.log(data);
+
+      console.log("reading...");
+      const reader = res.body?.getReader();
+      console.log("reading stream...");
+
+      console.log("reading stream...");
+      while (true) {
+        const res = await reader?.read();
+        const done = res?.done;
+        const value = res?.value;
+        if (done) {
+          console.log("done");
+          break;
+        }
+
+        useApply(value!);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -29,6 +70,7 @@ export default function Home() {
       <main className={styles.main}>
         <h1>Welcome to my app</h1>
         <SendMsg />
+        <div id="data"></div>
       </main>
     </>
   );
