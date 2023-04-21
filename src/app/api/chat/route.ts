@@ -1,4 +1,5 @@
 import { OpenAIStream } from "@/common/chat-api";
+import { CompletionModelMap } from "@/types/enum";
 import { OpenAIStreamPayload } from "@/types/openai";
 
 if (!process.env.OPENAI_API_KEY) {
@@ -19,7 +20,7 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   const payload: OpenAIStreamPayload = {
-    model: "gpt-3.5-turbo",
+    model: CompletionModelMap["gpt-3.5-turbo"],
     messages: [{ role: "user", content: prompt }],
     temperature: 0.7,
     top_p: 1,

@@ -1,5 +1,5 @@
 import MarkdownIt from "markdown-it";
-import { FormatMessageMap } from "./enum";
+import { FormatMessageMap } from "../types/enum";
 
 /** 多种 markdown-it 配置 */
 const markdownItMap = {
