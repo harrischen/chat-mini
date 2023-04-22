@@ -5,7 +5,7 @@ import {
   ReconnectInterval,
 } from "eventsource-parser";
 
-export async function OpenAIStream(payload: OpenAIStreamPayload) {
+export async function OpenAIStream(payload: Partial<OpenAIStreamPayload>) {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
 

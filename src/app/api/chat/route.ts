@@ -19,14 +19,13 @@ export async function POST(req: Request): Promise<Response> {
     return new Response("No prompt in the request", { status: 400 });
   }
 
-  const payload: OpenAIStreamPayload = {
+  const payload: Partial<OpenAIStreamPayload> = {
     model: CompletionModelMap["gpt-3.5-turbo"],
     messages: [{ role: "user", content: prompt }],
     temperature: 0.7,
     top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,
-    max_tokens: 50,
     stream: true,
     n: 1,
   };
