@@ -2,17 +2,26 @@
 
 import Head from "next/head";
 import { useState } from "react";
+import { ISingleAuestionAndAnswer } from "@/types/common";
+import { IChatResponse, IMessage } from "@/types/openai";
 
 export default function Home() {
+  // are you in the process of answering
   const [loading, setLoading] = useState(false);
+  // input box content
   const [input, setInput] = useState("");
-  const [response, setResponse] = useState<String>("");
-
-  const prompt = `Q: ${input} Generate a response with less than 200 characters.`;
+  // current answer
+  const [answer, setAnswer] = useState<string>("");
+  // historical Q&A content
+  const [history, setHistory] = useState<ISingleAuestionAndAnswer[]>([]);
+  // set the message object of OpenAi
+  const [messages, setMessages] = useState<(IMessage | IChatResponse)[]>([]);
 
   const generateResponse = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const tempQuestion = `${input} Generate a response with less than 200 characters.`;
+    let tempAnswer = "";
+
     e.preventDefault();
-    setResponse("");
     setLoading(true);
 
     const response = await fetch("/api/chat", {
@@ -21,7 +30,7 @@ export default function Home() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt,
+        prompt: tempQuestion,
       }),
     });
 
@@ -41,9 +50,18 @@ export default function Home() {
     while (!done) {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
-      const chunkValue = decoder.decode(value);
-      setResponse((prev) => prev + chunkValue);
+      tempAnswer = tempAnswer + decoder.decode(value);
+      setAnswer(tempAnswer);
     }
+
+    setHistory([
+      ...history,
+      {
+        question: tempQuestion,
+        answer: tempAnswer,
+      },
+    ]);
+    setInput("");
     setLoading(false);
   };
 
@@ -75,7 +93,15 @@ export default function Home() {
               <div>...</div>
             </button>
           )}
-          {response && <div>{response}</div>}
+          {answer && <div>{answer}</div>}
+          <div>=============</div>
+          {history.map((item) => (
+            <div key={item.question}>
+              <div>{item.question}</div>
+              <div>{item.answer}</div>
+              <div>---------------------------------</div>
+            </div>
+          ))}
         </div>
       </main>
     </>

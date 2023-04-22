@@ -5,6 +5,35 @@ export interface ChatGPTMessage {
   content: string;
 }
 
+/**
+ * 单条消息
+ */
+export interface IMessage {
+  role: Role;
+  content: string;
+}
+
+/**
+ * /v1/chat/completions 的响应体
+ * https://platform.openai.com/docs/api-reference/chat
+ */
+export interface IChatResponse {
+  id: string;
+  model: Model;
+  object: "chat.completion";
+  created: number;
+  choices: {
+    index: number;
+    message: Message;
+    finish_reason: null | "stop";
+  }[];
+  usage: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+}
+
 export interface OpenAIStreamPayload {
   model: string;
   messages: ChatGPTMessage[];

@@ -12,11 +12,11 @@ export async function OpenAIStream(payload: Partial<OpenAIStreamPayload>) {
   let counter = 0;
 
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ""}`,
     },
-    method: "POST",
     body: JSON.stringify(payload),
   });
 
@@ -45,7 +45,7 @@ export async function OpenAIStream(payload: Partial<OpenAIStreamPayload>) {
       }
 
       const parser = createParser(onParse);
-      for await (const chunk of res.body as any) {
+      for await (const chunk of res.body as any as IterableIterator<Uint8Array>) {
         parser.feed(decoder.decode(chunk));
       }
     },
