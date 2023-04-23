@@ -1,5 +1,5 @@
 import { CompletionModelMap, Role } from "@/types/enum";
-import { OpenAIStreamPayload } from "@/types/openai";
+import { IMessage, OpenAIStreamPayload } from "@/types/openai";
 import {
   ParsedEvent,
   ReconnectInterval,
@@ -15,17 +15,17 @@ export async function POST(req: Request): Promise<Response> {
     throw new Error("Missing env var from OpenAI");
   }
 
-  const { prompt } = (await req.json()) as {
-    prompt?: string;
+  const { messages } = (await req.json()) as {
+    messages?: IMessage[];
   };
 
-  if (!prompt) {
+  if (!(messages?.length && messages?.[0].content)) {
     return new Response("No prompt in the request", { status: 400 });
   }
 
   const payload: Partial<OpenAIStreamPayload> = {
     model: CompletionModelMap["gpt-3.5-turbo"],
-    messages: [{ role: Role.user, content: prompt }],
+    messages,
     temperature: 0.7,
     top_p: 1,
     frequency_penalty: 0,

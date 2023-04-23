@@ -4,63 +4,65 @@ import Head from "next/head";
 import { useState } from "react";
 import { ISingleAuestionAndAnswer } from "@/types/common";
 import { IChatResponse, IMessage } from "@/types/openai";
+import { Role } from "@/types/enum";
 
 export default function Home() {
   // are you in the process of answering
   const [loading, setLoading] = useState(false);
   // input box content
   const [input, setInput] = useState("");
-  // current answer
-  const [answer, setAnswer] = useState<string>("");
-  // historical Q&A content
-  const [history, setHistory] = useState<ISingleAuestionAndAnswer[]>([]);
   // set the message object of OpenAi
-  const [messages, setMessages] = useState<(IMessage | IChatResponse)[]>([]);
+  const [messages, setMessages] = useState<IMessage[]>([]);
 
   const generateResponse = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    const tempQuestion = `${input} Generate a response with less than 200 characters.`;
-    let tempAnswer = "";
-
     e.preventDefault();
     setLoading(true);
 
+    const bodyParams = [...messages, { role: Role.user, content: input }];
+
+    // 先将刚刚的问题插入到消息列表当中
+    setMessages(bodyParams);
+
+    // 发送异步请求给服务端
+    // 通过服务端来调用opanai的接口
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt: tempQuestion,
+        messages: bodyParams,
       }),
     });
 
+    // 如果服务端返回的数据异常，则直接拦截
+    // TODO 异常的时候，需要将错误内容反应在消息列表当中
     if (!response.ok) {
       throw new Error(response.statusText);
     }
 
+    // 如果服务端返回的数据为空，则不需要做任何处理
     const data = response.body;
     if (!data) {
       return;
     }
 
+    // 解包(其实就是处理stream数据)
     const reader = data.getReader();
     const decoder = new TextDecoder();
     let done = false;
+    let answer = "";
 
+    // 不断更新stream的数据内容，实现打字效果
     while (!done) {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
-      tempAnswer = tempAnswer + decoder.decode(value);
-      setAnswer(tempAnswer);
+      answer = `${answer}${decoder.decode(value)}`;
+      setMessages([...bodyParams, { role: Role.assistant, content: answer }]);
     }
 
-    setHistory([
-      ...history,
-      {
-        question: tempQuestion,
-        answer: tempAnswer,
-      },
-    ]);
+    // 当stream数据解析完之后，需要清空输入框的内容
+    // 并重置Loading状态
     setInput("");
     setLoading(false);
   };
@@ -77,32 +79,33 @@ export default function Home() {
       <main>
         <h1>Welcome to my app</h1>
         <div>
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            rows={4}
-            maxLength={200}
-            placeholder={"e.g. What is React?"}
-          />
-          {!loading ? (
-            <button onClick={(e) => generateResponse(e)}>
-              Generate Response &rarr;
-            </button>
-          ) : (
-            <button disabled>
-              <div>...</div>
-            </button>
-          )}
-          {answer && <div>{answer}</div>}
-          <div>=============</div>
-          {history.map((item) => (
-            <div key={item.question}>
-              <div>{item.question}</div>
-              <div>{item.answer}</div>
+          {messages.map((item, index) => (
+            <div key={`${index}-${item.role}-${item.content}`}>
+              <div>
+                {item.role}
+                {item.content}
+              </div>
               <div>---------------------------------</div>
             </div>
           ))}
         </div>
+
+        <textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          rows={4}
+          maxLength={200}
+          placeholder={"e.g. What is React?"}
+        />
+        {!loading ? (
+          <button onClick={(e) => generateResponse(e)}>
+            Generate Response &rarr;
+          </button>
+        ) : (
+          <button disabled>
+            <div>...</div>
+          </button>
+        )}
       </main>
     </>
   );
