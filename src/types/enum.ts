@@ -17,3 +17,13 @@ export enum HttpStatusCode {
   OK = 200,
   ParamsError = 400,
 }
+
+/**
+ * 角色
+ * 参考 https://github.com/openai/openai-node/blob/master/api.ts
+ */
+export enum Role {
+  system = "system",
+  user = "user",
+  assistant = "assistant",
+}
