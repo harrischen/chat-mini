@@ -1,14 +1,9 @@
-export type ChatGPTAgent = "user" | "system";
-
-export interface ChatGPTMessage {
-  role: ChatGPTAgent;
-  content: string;
-}
+import { Role } from "./enum";
 
 /**
  * 单条消息
  */
-export interface IMessage {
+export interface IChatGPTMessage {
   role: Role;
   content: string;
 }
@@ -36,7 +31,7 @@ export interface IChatResponse {
 
 export interface OpenAIStreamPayload {
   model: string;
-  messages: ChatGPTMessage[];
+  messages: IChatGPTMessage[];
   /** 控制结果的随机性，如果希望结果更有创意可以尝试 0.9，或者希望有固定结果可以尝试 0.0 */
   temperature: number;
   /** 一个可用于代替 temperature 的参数，对应机器学习中 nucleus sampling（核采样），如果设置 0.1 意味着只考虑构成前 10% 概率质量的 tokens */

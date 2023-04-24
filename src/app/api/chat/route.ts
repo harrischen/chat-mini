@@ -1,5 +1,5 @@
-import { CompletionModelMap, Role } from "@/types/enum";
-import { IMessage, OpenAIStreamPayload } from "@/types/openai";
+import { CompletionModelMap } from "@/types/enum";
+import { IChatGPTMessage, OpenAIStreamPayload } from "@/types/openai";
 import {
   ParsedEvent,
   ReconnectInterval,
@@ -16,7 +16,7 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   const { messages } = (await req.json()) as {
-    messages?: IMessage[];
+    messages?: IChatGPTMessage[];
   };
 
   if (!(messages?.length && messages?.[0].content)) {

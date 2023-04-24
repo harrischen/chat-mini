@@ -2,9 +2,8 @@
 
 import Head from "next/head";
 import { useState } from "react";
-import { ISingleAuestionAndAnswer } from "@/types/common";
-import { IChatResponse, IMessage } from "@/types/openai";
 import { Role } from "@/types/enum";
+import { IChatGPTMessage } from "@/types/openai";
 
 export default function Home() {
   // are you in the process of answering
@@ -12,59 +11,74 @@ export default function Home() {
   // input box content
   const [input, setInput] = useState("");
   // set the message object of OpenAi
-  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [messages, setMessages] = useState<IChatGPTMessage[]>([]);
 
   const generateResponse = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setLoading(true);
 
-    const bodyParams = [...messages, { role: Role.user, content: input }];
-
     // 先将刚刚的问题插入到消息列表当中
+    const bodyParams = [...messages, { role: Role.user, content: input }];
     setMessages(bodyParams);
 
-    // 发送异步请求给服务端
-    // 通过服务端来调用opanai的接口
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        messages: bodyParams,
-      }),
-    });
+    try {
+      // 发送异步请求给服务端
+      // 通过服务端来调用opanai的接口
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messages: bodyParams,
+        }),
+      });
 
-    // 如果服务端返回的数据异常，则直接拦截
-    // TODO 异常的时候，需要将错误内容反应在消息列表当中
-    if (!response.ok) {
-      throw new Error(response.statusText);
+      // 如果服务端返回的数据异常，则直接拦截
+      if (!response.ok) {
+        setMessages([
+          ...bodyParams,
+          {
+            role: Role.assistant,
+            content: response.statusText,
+          },
+        ]);
+        throw new Error(response.statusText);
+      }
+
+      // 如果服务端返回的数据为空，则不需要做任何处理
+      const data = response.body;
+      if (!data) {
+        return;
+      }
+
+      // 解包(其实就是处理stream数据)
+      const reader = data.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+      let answer = "";
+
+      // 不断更新stream的数据内容，实现打字效果
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        answer = `${answer}${decoder.decode(value)}`;
+        setMessages([...bodyParams, { role: Role.assistant, content: answer }]);
+      }
+    } catch (err) {
+      setMessages([
+        ...bodyParams,
+        {
+          role: Role.assistant,
+          content: (err as Error).message,
+        },
+      ]);
+    } finally {
+      // 当stream数据解析完之后，需要清空输入框的内容
+      // 并重置Loading状态
+      setInput("");
+      setLoading(false);
     }
-
-    // 如果服务端返回的数据为空，则不需要做任何处理
-    const data = response.body;
-    if (!data) {
-      return;
-    }
-
-    // 解包(其实就是处理stream数据)
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    let done = false;
-    let answer = "";
-
-    // 不断更新stream的数据内容，实现打字效果
-    while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      answer = `${answer}${decoder.decode(value)}`;
-      setMessages([...bodyParams, { role: Role.assistant, content: answer }]);
-    }
-
-    // 当stream数据解析完之后，需要清空输入框的内容
-    // 并重置Loading状态
-    setInput("");
-    setLoading(false);
   };
 
   return (
