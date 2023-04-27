@@ -18,7 +18,13 @@ export default function Home() {
     setLoading(true);
 
     // 先将刚刚的问题插入到消息列表当中
-    const bodyParams = [...messages, { role: Role.user, content: input }];
+    const bodyParams = [
+      ...messages,
+      {
+        role: Role.user,
+        content: input,
+      },
+    ];
     setMessages(bodyParams);
 
     try {
@@ -57,13 +63,21 @@ export default function Home() {
       const decoder = new TextDecoder();
       let done = false;
       let answer = "";
+      let newMessages: IChatGPTMessage[] = [];
 
       // 不断更新stream的数据内容，实现打字效果
       while (!done) {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         answer = `${answer}${decoder.decode(value)}`;
-        setMessages([...bodyParams, { role: Role.assistant, content: answer }]);
+        newMessages = [
+          ...bodyParams,
+          {
+            role: Role.assistant,
+            content: answer,
+          },
+        ];
+        setMessages(newMessages);
       }
     } catch (err) {
       setMessages([
