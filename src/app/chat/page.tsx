@@ -4,6 +4,7 @@ import Head from "next/head";
 import { useState } from "react";
 import { Role } from "@/types/enum";
 import { IChatGPTMessage } from "@/types/openai";
+import { formatMessage } from "@/common/helper";
 
 export default function Home() {
   // are you in the process of answering
@@ -110,8 +111,12 @@ export default function Home() {
           {messages.map((item, index) => (
             <div key={`${index}-${item.role}-${item.content}`}>
               <div>
-                {item.role}
-                {item.content}
+                <div>{item.role}</div>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: formatMessage(item.content),
+                  }}
+                />
               </div>
               <div>---------------------------------</div>
             </div>
