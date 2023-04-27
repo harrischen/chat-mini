@@ -50,7 +50,16 @@ async function OpenAIStream(payload: Partial<OpenAIStreamPayload>) {
       "Content-Type": "application/json",
       Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ""}`,
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      model: payload.model,
+      messages: payload.messages,
+      temperature: payload.temperature,
+      top_p: payload.top_p,
+      frequency_penalty: payload.frequency_penalty,
+      presence_penalty: payload.presence_penalty,
+      stream: payload.stream,
+      n: payload.n,
+    }),
   });
 
   const stream = new ReadableStream({
