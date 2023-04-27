@@ -10,22 +10,35 @@ export const config = {
   runtime: "edge",
 };
 
-export async function POST(req: Request): Promise<Response> {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error("Missing env var from OpenAI");
+/**
+ * 获取apiKey
+ * @returns
+ */
+function GetApiKey(): string {
+  return process.env.OPENAI_API_KEY || "";
+}
+
+/**
+ * 通过stream方式请求openai的对话消息
+ * @param req
+ * @returns
+ */
+export async function POST(req: Request) {
+  // 验证apiKey的有效性
+  const verifyResApiKey = VerifyApiKey(GetApiKey());
+  if (verifyResApiKey.status !== 200) {
+    return new Response(verifyResApiKey.message);
   }
 
-  const { messages } = (await req.json()) as {
-    messages?: IChatGPTMessage[];
-  };
-
-  if (!(messages?.length && messages?.[0].content)) {
-    return new Response("No prompt in the request", { status: 400 });
+  // 验证messages的有效性
+  const verifyResMessages = await VerifyMessages(req);
+  if (verifyResMessages.status !== 200) {
+    return new Response(verifyResMessages.message as string);
   }
 
   const payload: Partial<OpenAIStreamPayload> = {
     model: CompletionModelMap["gpt-3.5-turbo-0301"],
-    messages,
+    messages: verifyResMessages.message as IChatGPTMessage[],
     temperature: 0.7,
     top_p: 1,
     frequency_penalty: 0,
@@ -38,6 +51,11 @@ export async function POST(req: Request): Promise<Response> {
   return new Response(stream);
 }
 
+/**
+ * 发送对话逻辑
+ * @param payload
+ * @returns
+ */
 async function OpenAIStream(payload: Partial<OpenAIStreamPayload>) {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
@@ -48,7 +66,7 @@ async function OpenAIStream(payload: Partial<OpenAIStreamPayload>) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ""}`,
+      Authorization: `Bearer ${GetApiKey()}`,
     },
     body: JSON.stringify({
       model: payload.model,
@@ -94,4 +112,46 @@ async function OpenAIStream(payload: Partial<OpenAIStreamPayload>) {
   });
 
   return stream;
+}
+
+/**
+ * 验证apiKey的有效性
+ * @param apiKey
+ * @returns
+ */
+function VerifyApiKey(apiKey: string) {
+  if (!apiKey) {
+    return {
+      status: 400,
+      message: "Missing env var from OpenAI",
+    };
+  }
+
+  return {
+    status: 200,
+    message: "OPENAI_API_KEY 有效",
+  };
+}
+
+/**
+ * 验证message的有效性，并返回message
+ * @param messages
+ * @returns
+ */
+async function VerifyMessages(req: Request) {
+  const { messages } = (await req.json()) as {
+    messages?: IChatGPTMessage[];
+  };
+
+  if (!(messages?.length && messages[messages.length - 1]?.content)) {
+    return {
+      status: 400,
+      message: "No prompt in the request",
+    };
+  }
+
+  return {
+    status: 200,
+    message: messages,
+  };
 }
