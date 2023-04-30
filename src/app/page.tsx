@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Role } from "@/types/enum";
 import { IChatGPTMessage } from "@/types/openai";
 import { formatMessage } from "@/common/helper";
+import { scrollToBottom } from "@/common/scroller";
 
 export default function Home() {
   // are you in the process of answering
@@ -27,6 +28,7 @@ export default function Home() {
       },
     ];
     setMessages(bodyParams);
+    scrollToBottom();
 
     try {
       // 发送异步请求给服务端
@@ -79,6 +81,7 @@ export default function Home() {
           },
         ];
         setMessages(newMessages);
+        scrollToBottom();
       }
     } catch (err) {
       setMessages([
