@@ -4,8 +4,8 @@ import Head from "next/head";
 import { useState } from "react";
 import { Role } from "@/types/enum";
 import { IChatGPTMessage } from "@/types/openai";
-import { formatMessage } from "@/common/helper";
 import { scrollToBottom } from "@/common/scroller";
+import { delay, formatMessage } from "@/common/helper";
 
 export default function Home() {
   // are you in the process of answering
@@ -15,7 +15,19 @@ export default function Home() {
   // set the message object of OpenAi
   const [messages, setMessages] = useState<IChatGPTMessage[]>([]);
 
-  const generateResponse = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  /**
+   * 生成对话
+   * @param e
+   * @returns
+   */
+  const generateChat = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    isReset: boolean
+  ) => {
+    if (loading) {
+      return;
+    }
+
     e.preventDefault();
     setLoading(true);
 
@@ -27,7 +39,15 @@ export default function Home() {
         content: input,
       },
     ];
+
+    const newBodyParams = [
+      {
+        role: Role.user,
+        content: input,
+      },
+    ];
     setMessages(bodyParams);
+    await delay();
     scrollToBottom();
 
     try {
@@ -39,7 +59,7 @@ export default function Home() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: bodyParams,
+          messages: isReset ? newBodyParams : bodyParams,
         }),
       });
 
@@ -99,6 +119,39 @@ export default function Home() {
     }
   };
 
+  const sendBtn = (
+    <button disabled={loading} onClick={(e) => generateChat(e, false)}>
+      {loading ? "..." : "发送"}
+    </button>
+  );
+
+  const resetBtn = (
+    <button disabled={loading} onClick={(e) => generateChat(e, true)}>
+      {loading ? "...." : "重新发送"}
+    </button>
+  );
+
+  const btnGroup =
+    messages.length >= 2 ? (
+      <div>
+        {sendBtn}
+        {resetBtn}
+      </div>
+    ) : (
+      <div>{sendBtn}</div>
+    );
+
+  const formGroup = (
+    <textarea
+      disabled={loading}
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+      rows={4}
+      maxLength={200}
+      placeholder={"e.g. What is React?"}
+    />
+  );
+
   return (
     <>
       <Head>
@@ -126,22 +179,8 @@ export default function Home() {
           ))}
         </div>
 
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          rows={4}
-          maxLength={200}
-          placeholder={"e.g. What is React?"}
-        />
-        {!loading ? (
-          <button onClick={(e) => generateResponse(e)}>
-            Generate Response &rarr;
-          </button>
-        ) : (
-          <button disabled>
-            <div>...</div>
-          </button>
-        )}
+        {formGroup}
+        {btnGroup}
       </main>
     </>
   );

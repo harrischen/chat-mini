@@ -37,3 +37,14 @@ export async function to<T>(promise: Promise<T>): Promise<[T, any]> {
     return [null, e] as [any, any];
   }
 }
+
+/**
+ * 延迟函数
+ * @param time
+ * @returns
+ */
+export async function delay(time = 1000 / 60) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, time);
+  });
+}
