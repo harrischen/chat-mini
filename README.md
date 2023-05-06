@@ -1,38 +1,36 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## 项目概述
 
-## Getting Started
+1. 使用`Next.js`框架开发前端页面及服务端接口；
+2. 前端页面采用`"use client";`的方式进行页面渲染；
+3. 服务端通过`fetch`调用`openai`相关接口；
+4. 当前`openai`所使用的`model`是`gpt-3.5-turbo-0301`；
 
-First, run the development server:
+## 如何开始
+
+### 安装依赖
+
+```bash
+npm install
+```
+
+### 本地运行
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 本地预览
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+使用浏览器打开 [http://localhost:3000](http://localhost:3000) 查看结果。
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## 如何修改
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+1. 修改`src/app/page.tsx`文件进行页面调整；
+2. 修改`src/app/api/chat/route.ts`文件进行接口维护；
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## 配置管理
+1. `.env.local`用于管理本地开发过程所使用的`OPENAI_API_ORGANIZATION`、`OPENAI_API_KEY`
+2. `.env.production`用于管理生产环境所使用的`OPENAI_API_ORGANIZATION`、`OPENAI_API_KEY`
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+> 1. `.env.local`已经被`.gitignore`
+> 2. 第一次部署到生产环境的时候，需要手动创建一份`.env.production`
