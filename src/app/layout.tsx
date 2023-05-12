@@ -1,3 +1,5 @@
+import './styles/global.css'
+
 export const metadata = {
   title: 'ChatNext',
   description: '一个简便的ChatGPT工具',

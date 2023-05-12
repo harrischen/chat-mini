@@ -1,0 +1,29 @@
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+}
+
+/* 深色模式 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #000000;
+    --text-color: #ffffff;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 10px;
+  margin: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-size: 12px;
+}
+
+textarea {
+  display: block;
+  width: 100%;
+}
