@@ -1,0 +1,48 @@
+.chatList {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.userItem {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.assistantItem {
+  padding-top: 10px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.assistantItem:last-child {
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.userBubble {
+  max-width: 80%;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: var(--userBubbleBackgroundColor);
+  color: var(--userBubbleTextColor);
+  font-size: 14px;
+}
+
+.userBubble p {
+  margin: 0;
+}
+
+.assistantBubble {
+  max-width: 80%;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: var(--assistantBubbleBackgroundColor);
+  color: var(--assistantBubbleTextColor);
+  font-size: 14px;
+}
+
+.assistantBubble p {
+  margin: 0;
+}

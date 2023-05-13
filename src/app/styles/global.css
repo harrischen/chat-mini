@@ -1,13 +1,21 @@
 :root {
-  --bg-color: #ffffff;
-  --text-color: #000000;
+  --bg-color: #eee;
+  --text-color: #000;
+  --userBubbleBackgroundColor: #eee;
+  --userBubbleTextColor: #000;
+  --assistantBubbleBackgroundColor: #b2e281;
+  --assistantBubbleTextColor: #000;
 }
 
 /* 深色模式 */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-color: #000000;
-    --text-color: #ffffff;
+    --bg-color: #000;
+    --text-color: #fff;
+    --userBubbleBackgroundColor: #eee;
+    --userBubbleTextColor: #000;
+    --assistantBubbleBackgroundColor: #b2e281;
+    --assistantBubbleTextColor: #000;
   }
 }
 
@@ -26,4 +34,5 @@ body {
 textarea {
   display: block;
   width: 100%;
+  resize: none;
 }

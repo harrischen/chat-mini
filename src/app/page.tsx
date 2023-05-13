@@ -5,6 +5,7 @@ import { Role } from "@/types/enum";
 import { IChatGPTMessage } from "@/types/openai";
 import { scrollToBottom } from "@/common/scroller";
 import { delay, formatMessage } from "@/common/helper";
+import chatStyle from "./styles/chat.module.css";
 
 export default function Home() {
   // are you in the process of answering
@@ -12,7 +13,16 @@ export default function Home() {
   // input box content
   const [input, setInput] = useState("");
   // set the message object of OpenAi
-  const [messages, setMessages] = useState<IChatGPTMessage[]>([]);
+  const [messages, setMessages] = useState<IChatGPTMessage[]>([
+    {
+      role: Role.user,
+      content: "Hi, I'm OpenAI Chatbot.",
+    },
+    {
+      role: Role.assistant,
+      content: "How can I help you?",
+    },
+  ]);
 
   /**
    * 生成对话
@@ -157,18 +167,26 @@ export default function Home() {
 
   // 对话内容
   const messagesContent = (
-    <div>
+    <div className={chatStyle.chatList}>
       {messages.map((item, index) => (
-        <div key={`${index}-${item.role}-${item.content}`}>
-          <div>
-            <div>{item.role}</div>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: formatMessage(item.content),
-              }}
-            />
-          </div>
-          <div>---------------------------------</div>
+        <div
+          className={
+            item.role === Role.user
+              ? chatStyle.userItem
+              : chatStyle.assistantItem
+          }
+          key={`${index}-${item.role}-${item.content}`}
+        >
+          <div
+            className={
+              item.role === Role.user
+                ? chatStyle.userBubble
+                : chatStyle.assistantBubble
+            }
+            dangerouslySetInnerHTML={{
+              __html: item.content ? formatMessage(item.content) : "Unknow Message",
+            }}
+          />
         </div>
       ))}
     </div>
