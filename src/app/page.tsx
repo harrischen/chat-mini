@@ -6,6 +6,7 @@ import { IChatGPTMessage } from "@/types/openai";
 import { scrollToBottom } from "@/common/scroller";
 import { delay, formatMessage } from "@/common/helper";
 import chatStyle from "./styles/chat.module.css";
+import footerStyle from "./styles/footer.module.css";
 
 export default function Home() {
   // are you in the process of answering
@@ -130,14 +131,14 @@ export default function Home() {
 
   // 发送按钮
   const sendBtn = (
-    <button disabled={loading} onClick={(e) => generateChat(e, false)}>
+    <button name="chat" disabled={loading} onClick={(e) => generateChat(e, false)}>
       {loading ? "..." : "发送"}
     </button>
   );
 
   // 重新发送按钮（仅仅包含一条message，会忽略上下文）
   const resetBtn = (
-    <button disabled={loading} onClick={(e) => generateChat(e, true)}>
+    <button name="chat" disabled={loading} onClick={(e) => generateChat(e, true)}>
       {loading ? "...." : "重新发送"}
     </button>
   );
@@ -145,12 +146,12 @@ export default function Home() {
   // 按钮组，决定是否出现《重新发送》这个按钮
   const btnGroup =
     messages.length >= 2 ? (
-      <div>
+      <div className={footerStyle.toolbar}>
         {sendBtn}
         {resetBtn}
       </div>
     ) : (
-      <div>{sendBtn}</div>
+      <div className={footerStyle.toolbar}>{sendBtn}</div>
     );
 
   // 表单模块
@@ -159,7 +160,6 @@ export default function Home() {
       disabled={loading}
       value={input}
       onChange={(e) => setInput(e.target.value)}
-      rows={4}
       maxLength={500}
       placeholder={"e.g. What is React?"}
     />
@@ -184,7 +184,9 @@ export default function Home() {
                 : chatStyle.assistantBubble
             }
             dangerouslySetInnerHTML={{
-              __html: item.content ? formatMessage(item.content) : "Unknow Message",
+              __html: item.content
+                ? formatMessage(item.content)
+                : "Unknow Message",
             }}
           />
         </div>
@@ -196,8 +198,10 @@ export default function Home() {
     <main>
       <h1>Welcome to ChatNext</h1>
       {messages.length ? messagesContent : null}
-      {formGroup}
-      {btnGroup}
+      <div className={footerStyle.footer}>
+        {formGroup}
+        {btnGroup}
+      </div>
     </main>
   );
 }
