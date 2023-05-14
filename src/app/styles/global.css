@@ -2,10 +2,15 @@
   --bg-color: #eee;
   --text-color: #000;
   --textareaBorderColor: #ddd;
+  --textareaShadowColor: #000;
   --userBubbleBackgroundColor: #666;
   --userBubbleTextColor: #fff;
   --assistantBubbleBackgroundColor: #b2e281;
   --assistantBubbleTextColor: #000;
+  --sendButtonBackgroundColor: #60be00;
+  --sendButtonTextColor: #000;
+  --resetButtonBackgroundColor: #ffcc00;
+  --resetButtonTextColor: #000;
 }
 
 /* 深色模式 */
@@ -14,10 +19,15 @@
     --bg-color: #000;
     --text-color: #fff;
     --textareaBorderColor: #ddd;
+    --textareaShadowColor: #fff;
     --userBubbleBackgroundColor: #eee;
     --userBubbleTextColor: #000;
     --assistantBubbleBackgroundColor: #b2e281;
     --assistantBubbleTextColor: #000;
+    --sendButtonBackgroundColor: #60be00;
+    --sendButtonTextColor: #000;
+    --resetButtonBackgroundColor: #ffcc00;
+    --resetButtonTextColor: #000;
   }
 }
 
@@ -50,7 +60,7 @@ textarea {
   outline: none;
 }
 
-button[name="chat"] {
+button {
   height: 30px;
   padding-left: 20px;
   padding-right: 20px;

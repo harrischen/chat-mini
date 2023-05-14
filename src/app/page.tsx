@@ -7,6 +7,7 @@ import { scrollToBottom } from "@/common/scroller";
 import { delay, formatMessage } from "@/common/helper";
 import chatStyle from "./styles/chat.module.css";
 import footerStyle from "./styles/footer.module.css";
+import buttonStyle from "./styles/button.module.css";
 
 export default function Home() {
   // are you in the process of answering
@@ -35,6 +36,10 @@ export default function Home() {
     isReset: boolean
   ) => {
     if (loading) {
+      return;
+    }
+
+    if (!input.trim().length) {
       return;
     }
 
@@ -131,15 +136,23 @@ export default function Home() {
 
   // 发送按钮
   const sendBtn = (
-    <button name="chat" disabled={loading} onClick={(e) => generateChat(e, false)}>
-      {loading ? "..." : "发送"}
+    <button
+      disabled={loading}
+      className={buttonStyle.send}
+      onClick={(e) => generateChat(e, false)}
+    >
+      <span>发送</span>
     </button>
   );
 
   // 重新发送按钮（仅仅包含一条message，会忽略上下文）
   const resetBtn = (
-    <button name="chat" disabled={loading} onClick={(e) => generateChat(e, true)}>
-      {loading ? "...." : "重新发送"}
+    <button
+      disabled={loading}
+      className={buttonStyle.reset}
+      onClick={(e) => generateChat(e, true)}
+    >
+      <span>重新发送</span>
     </button>
   );
 

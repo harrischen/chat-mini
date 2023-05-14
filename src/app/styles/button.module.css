@@ -1,0 +1,9 @@
+.send {
+  background: var(--sendButtonBackgroundColor);
+  color: var(--sendButtonTextColor);
+}
+
+.reset {
+  background: var(--resetButtonBackgroundColor);
+  color: var(--resetButtonTextColor);
+}
