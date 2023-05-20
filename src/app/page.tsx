@@ -4,12 +4,14 @@ import { useState } from "react";
 import { Role } from "@/types/enum";
 import { IChatGPTMessage } from "@/types/openai";
 import { scrollToBottom } from "@/common/scroller";
-import { delay, formatMessage } from "@/common/helper";
+import { delay } from "@/common/helper";
 import chatStyle from "./styles/chat.module.css";
 import footerStyle from "./styles/footer.module.css";
 import buttonStyle from "./styles/button.module.css";
+import { Formatter } from "@/common/formatter";
 
 export default function Home() {
+  const formatter = new Formatter();
   // are you in the process of answering
   const [loading, setLoading] = useState(false);
   // input box content
@@ -198,7 +200,7 @@ export default function Home() {
             }
             dangerouslySetInnerHTML={{
               __html: item.content
-                ? formatMessage(item.content)
+                ? formatter.message(item.content)
                 : "Unknow Message",
             }}
           />

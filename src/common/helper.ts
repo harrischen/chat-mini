@@ -1,29 +1,3 @@
-import MarkdownIt from "markdown-it";
-
-/**
- * 格式化消息
- * @param message
- * @param mode
- * @returns
- */
-export function formatMessage(message?: string) {
-  let result = message?.trim();
-  if (!result) {
-    return "";
-  }
-
-  const mkd = new MarkdownIt("zero", {
-    breaks: true,
-    linkify: true,
-  });
-
-  return mkd
-    .enable(["code", "fence"])
-    .enable(["autolink", "backticks", "image", "link", "newline"])
-    .render(result)
-    .trim();
-}
-
 /**
  * 错误处理方法
  * 避免主要逻辑里面一大段的try catch
