@@ -2,7 +2,8 @@
   --bg-color: #eee;
   --text-color: #000;
   --textareaBorderColor: #ddd;
-  --textareaShadowColor: #000;
+  --textareaBackgroundColor: #fff;
+  --textareaDisabledBackgroundColor: #dedede;
   --userBubbleBackgroundColor: #666;
   --userBubbleTextColor: #fff;
   --assistantBubbleBackgroundColor: #b2e281;
@@ -18,8 +19,9 @@
   :root {
     --bg-color: #000;
     --text-color: #fff;
-    --textareaBorderColor: #ddd;
-    --textareaShadowColor: #fff;
+    --textareaBorderColor: #666;
+    --textareaBackgroundColor: #fff;
+    --textareaDisabledBackgroundColor: #aaa;
     --userBubbleBackgroundColor: #eee;
     --userBubbleTextColor: #000;
     --assistantBubbleBackgroundColor: #b2e281;
@@ -53,11 +55,16 @@ textarea {
   width: 100%;
   height: 80px;
   padding: 10px;
+  background-color: var(--textareaBackgroundColor);
   resize: none;
   appearance: none;
   border: 1px solid var(--textareaBorderColor);
   border-radius: 4px;
   outline: none;
+}
+
+textarea:disabled {
+  background-color: var(--textareaDisabledBackgroundColor);
 }
 
 button {
