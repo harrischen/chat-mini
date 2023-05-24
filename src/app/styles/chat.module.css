@@ -5,7 +5,7 @@
 
 .userItem {
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
 }
 
 .assistantItem {
@@ -13,7 +13,7 @@
   padding-bottom: 20px;
   margin-bottom: 20px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .assistantItem:last-child {
@@ -25,8 +25,8 @@
   max-width: 80%;
   padding: 10px;
   border-radius: 8px;
-  background-color: var(--userBubbleBackgroundColor);
-  color: var(--userBubbleTextColor);
+  background-color: var(--assistantBubbleBackgroundColor);
+  color: var(--assistantBubbleTextColor);
   font-size: 14px;
 }
 
@@ -38,8 +38,8 @@
   max-width: 80%;
   padding: 10px;
   border-radius: 8px;
-  background-color: var(--assistantBubbleBackgroundColor);
-  color: var(--assistantBubbleTextColor);
+  background-color: var(--userBubbleBackgroundColor);
+  color: var(--userBubbleTextColor);
   font-size: 14px;
 }
 
