@@ -10,6 +10,9 @@ import footerStyle from "./styles/footer.module.css";
 import buttonStyle from "./styles/button.module.css";
 import { Formatter } from "@/common/formatter";
 
+type mouseType = React.MouseEvent<HTMLButtonElement>;
+type keyboardType = React.KeyboardEvent<HTMLTextAreaElement>;
+
 export default function Home() {
   const formatter = new Formatter();
   // are you in the process of answering
@@ -29,12 +32,25 @@ export default function Home() {
   ]);
 
   /**
+   * 每次键盘按下去的时候，监听按键类型
+   * 只有是 enter 的场景下才需要触发对话的发送
+   * @param e
+   * @returns
+   */
+  const keyDownHandler = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (!(e.key === "Enter" && !e.shiftKey)) {
+      return;
+    }
+    return generateChat(e, false);
+  };
+
+  /**
    * 生成对话
    * @param e
    * @returns
    */
   const generateChat = async (
-    e: React.MouseEvent<HTMLButtonElement>,
+    e: mouseType | keyboardType,
     isReset: boolean
   ) => {
     if (loading) {
@@ -177,6 +193,7 @@ export default function Home() {
       onChange={(e) => setInput(e.target.value)}
       maxLength={500}
       placeholder={"e.g. What is React?"}
+      onKeyDown={(e) => keyDownHandler(e)}
     />
   );
 
