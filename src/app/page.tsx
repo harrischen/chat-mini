@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Role } from "@/types/enum";
 import { IChatGPTMessage } from "@/types/openai";
-import { scrollToBottom } from "@/common/scroller";
 import { delay } from "@/common/helper";
 import chatStyle from "./styles/chat.module.css";
 import footerStyle from "./styles/footer.module.css";
@@ -14,6 +13,9 @@ type mouseType = React.MouseEvent<HTMLButtonElement>;
 type keyboardType = React.KeyboardEvent<HTMLTextAreaElement>;
 
 export default function Home() {
+  // 一个标识，用于让页面始终能够自动滚动到可视区域
+  const chatboxRef = useRef<HTMLDivElement>(null);
+  // 数据格式化工具
   const formatter = new Formatter();
   // are you in the process of answering
   const [loading, setLoading] = useState(false);
@@ -30,6 +32,13 @@ export default function Home() {
       content: "How can I help you?",
     },
   ]);
+
+  // 每当有新消息的时候，将页面始终能够滚动到最底部
+  useEffect(() => {
+    if (chatboxRef.current) {
+      chatboxRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   /**
    * 每次键盘按下去的时候，监听按键类型
@@ -81,7 +90,6 @@ export default function Home() {
     ];
     setMessages(bodyParams);
     await delay();
-    scrollToBottom();
 
     try {
       // 发送异步请求给服务端
@@ -134,7 +142,6 @@ export default function Home() {
           },
         ];
         setMessages(newMessages);
-        scrollToBottom();
       }
     } catch (err) {
       setMessages([
@@ -230,6 +237,7 @@ export default function Home() {
     <main>
       <h1>Welcome to ChatNext</h1>
       {messages.length ? messagesContent : null}
+      <div ref={chatboxRef} />
       <div className={footerStyle.footer}>
         {formGroup}
         {btnGroup}
