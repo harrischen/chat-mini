@@ -27,11 +27,18 @@
   border-radius: 8px;
   background-color: var(--assistantBubbleBackgroundColor);
   color: var(--assistantBubbleTextColor);
-  font-size: 14px;
 }
 
 .userBubble p {
-  margin: 0;
+  margin: 4px 0;
+}
+
+.userBubble p:first-child {
+  margin-top: 0;
+}
+
+.userBubble p:last-child {
+  margin-bottom: 0;
 }
 
 .assistantBubble {
@@ -40,9 +47,16 @@
   border-radius: 8px;
   background-color: var(--userBubbleBackgroundColor);
   color: var(--userBubbleTextColor);
-  font-size: 14px;
 }
 
 .assistantBubble p {
-  margin: 0;
+  margin: 4px 0;
+}
+
+.assistantBubble p:first-child {
+  margin-top: 0;
+}
+
+.assistantBubble p:last-child {
+  margin-bottom: 0;
 }
