@@ -198,7 +198,7 @@ export default function Home() {
       disabled={loading}
       value={input}
       onChange={(e) => setInput(e.target.value)}
-      maxLength={500}
+      maxLength={1000}
       placeholder={"e.g. What is React?"}
       onKeyDown={(e) => keyDownHandler(e)}
     />
