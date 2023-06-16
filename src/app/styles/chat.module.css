@@ -22,7 +22,7 @@
 }
 
 .userBubble {
-  max-width: 80%;
+  max-width: 90%;
   padding: 10px;
   border-radius: 8px;
   background-color: var(--assistantBubbleBackgroundColor);
@@ -42,11 +42,12 @@
 }
 
 .assistantBubble {
-  max-width: 80%;
+  max-width: 90%;
   padding: 10px;
   border-radius: 8px;
   background-color: var(--userBubbleBackgroundColor);
   color: var(--userBubbleTextColor);
+  overflow-x: auto;
 }
 
 .assistantBubble p {
