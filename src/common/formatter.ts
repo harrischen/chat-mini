@@ -1,4 +1,7 @@
+import hljs from "highlight.js";
 import MarkdownIt from "markdown-it";
+import markdownItHighlightjs from "markdown-it-highlightjs";
+import "highlight.js/styles/atom-one-dark-reasonable.css";
 
 export class Formatter {
   mkd: undefined | MarkdownIt = undefined;
@@ -11,6 +14,8 @@ export class Formatter {
     return new MarkdownIt("zero", {
       breaks: true,
       linkify: true,
+    }).use(markdownItHighlightjs, {
+      hljs,
     });
   }
 
