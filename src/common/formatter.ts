@@ -11,7 +11,7 @@ export class Formatter {
   }
 
   initMkd() {
-    return new MarkdownIt("zero", {
+    return new MarkdownIt("commonmark", {
       breaks: true,
       linkify: true,
     }).use(markdownItHighlightjs, {
