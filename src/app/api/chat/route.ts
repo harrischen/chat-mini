@@ -70,7 +70,12 @@ async function OpenAIStream(payload: Partial<OpenAIStreamPayload>) {
     },
     body: JSON.stringify({
       model: payload.model,
-      messages: payload.messages,
+      messages: payload.messages?.map(item => {
+        return {
+          role: item.role,
+          content: item.content,
+        }
+      }),
       temperature: payload.temperature,
       top_p: payload.top_p,
       frequency_penalty: payload.frequency_penalty,

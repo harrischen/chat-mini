@@ -50,7 +50,7 @@ export default function Home() {
     if (!(e.key === "Enter" && !e.shiftKey)) {
       return;
     }
-    return generateChat(e, false);
+    return generateChat(e);
   };
 
   /**
@@ -58,10 +58,7 @@ export default function Home() {
    * @param e
    * @returns
    */
-  const generateChat = async (
-    e: mouseType | keyboardType,
-    isReset: boolean
-  ) => {
+  const generateChat = async (e: mouseType | keyboardType) => {
     if (loading) {
       return;
     }
@@ -79,13 +76,7 @@ export default function Home() {
       {
         role: Role.user,
         content: input,
-      },
-    ];
-
-    const newBodyParams = [
-      {
-        role: Role.user,
-        content: input,
+        time: new Date().toString(),
       },
     ];
     setMessages(bodyParams);
@@ -100,7 +91,7 @@ export default function Home() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: isReset ? newBodyParams : bodyParams,
+          messages: bodyParams,
         }),
       });
 
@@ -111,6 +102,7 @@ export default function Home() {
           {
             role: Role.assistant,
             content: response.statusText,
+            time: new Date().toString(),
           },
         ]);
         throw new Error(response.statusText);
@@ -149,6 +141,7 @@ export default function Home() {
         {
           role: Role.assistant,
           content: (err as Error).message,
+          time: new Date().toString(),
         },
       ]);
     } finally {
@@ -159,75 +152,21 @@ export default function Home() {
     }
   };
 
-  // 发送按钮
-  const sendBtn = (
-    <button
-      disabled={loading}
-      className={buttonStyle.send}
-      onClick={(e) => generateChat(e, false)}
-    >
-      <span>发送</span>
-    </button>
-  );
-
-  // 重新发送按钮（仅仅包含一条message，会忽略上下文）
-  const resetBtn = (
-    <button
-      disabled={loading}
-      className={buttonStyle.reset}
-      onClick={(e) => generateChat(e, true)}
-    >
-      <span>重新发送</span>
-    </button>
-  );
-
-  // 按钮组，决定是否出现《重新发送》这个按钮
-  const btnGroup =
-    messages.length >= 2 ? (
-      <div className={footerStyle.toolbar}>
-        {sendBtn}
-        {resetBtn}
-      </div>
-    ) : (
-      <div className={footerStyle.toolbar}>{sendBtn}</div>
-    );
-
-  // 表单模块
-  const formGroup = (
-    <textarea
-      disabled={loading}
-      value={input}
-      onChange={(e) => setInput(e.target.value)}
-      maxLength={1000}
-      placeholder={"e.g. What is React?"}
-      onKeyDown={(e) => keyDownHandler(e)}
-    />
-  );
-
   // 对话内容
   const messagesContent = (
     <div className={chatStyle.chatList}>
       {messages.map((item, index) => (
         <div
-          className={
-            item.role === Role.user
-              ? chatStyle.userItem
-              : chatStyle.assistantItem
-          }
+          className={item.role === Role.user ? chatStyle.userItem : chatStyle.assistantItem}
           key={`${index}-${item.role}-${item.content}`}
         >
-          <div
-            className={
-              item.role === Role.user
-                ? chatStyle.userBubble
-                : chatStyle.assistantBubble
-            }
-            dangerouslySetInnerHTML={{
-              __html: item.content
-                ? formatter.message(item.content)
-                : "Unknow Message",
-            }}
-          />
+          {item.time ? <div className={chatStyle.time}>{item.time}</div> : null}
+          <div className={chatStyle.bubbleMod}>
+            <div
+              className={item.role === Role.user ? chatStyle.userBubble : chatStyle.assistantBubble}
+              dangerouslySetInnerHTML={{ __html: item.content ? formatter.message(item.content) : "Unknow Message" }}
+            />
+          </div>
         </div>
       ))}
     </div>
@@ -236,11 +175,24 @@ export default function Home() {
   return (
     <main>
       <h1>Welcome to ChatNext</h1>
+
       {messages.length ? messagesContent : null}
+
+      {/* 用于实时更新页面滚动位置的标记 */}
       <div ref={chatboxRef} />
+
       <div className={footerStyle.footer}>
-        {formGroup}
-        {btnGroup}
+        <textarea
+          disabled={loading}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          maxLength={1000}
+          placeholder={"e.g. What is React?"}
+          onKeyDown={(e) => keyDownHandler(e)}
+        />
+        <div className={footerStyle.toolbar}>
+          <button className={buttonStyle.send} onClick={(e) => generateChat(e)}>发送</button>
+        </div>
       </div>
     </main>
   );

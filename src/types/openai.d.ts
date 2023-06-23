@@ -6,6 +6,7 @@ import { Role } from "./enum";
 export interface IChatGPTMessage {
   role: Role;
   content: string;
+  time?: string;
 }
 
 /**
