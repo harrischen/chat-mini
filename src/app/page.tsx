@@ -183,12 +183,13 @@ export default function Home() {
 
       <div className={footerStyle.footer}>
         <textarea
-          disabled={loading}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          autoFocus={!loading}
           maxLength={1000}
+          disabled={loading}
           placeholder={"e.g. What is React?"}
           onKeyDown={(e) => keyDownHandler(e)}
+          onChange={(e) => setInput(e.target.value)}
         />
         <div className={footerStyle.toolbar}>
           <button className={buttonStyle.send} onClick={(e) => generateChat(e)}>发送</button>

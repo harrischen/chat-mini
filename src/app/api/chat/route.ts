@@ -77,6 +77,7 @@ async function OpenAIStream(payload: Partial<OpenAIStreamPayload>) {
         }
       }),
       temperature: payload.temperature,
+      format: 'markdown',
       top_p: payload.top_p,
       frequency_penalty: payload.frequency_penalty,
       presence_penalty: payload.presence_penalty,
